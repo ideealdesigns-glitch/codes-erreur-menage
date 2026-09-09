@@ -3,64 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Code Erreur Électroménager</title>
+    <title>Guide des Codes Erreur Électroménager - Pannes et Solutions</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #222; max-width: 700px; margin: 40px auto; padding: 0 20px; background: #fdfdfd; }
-        .card { background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #eaeaea; }
-        h1 { font-size: 1.6rem; margin-top: 10px; color: #1a1a1a; }
-        .meta { color: #666; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+        :root { --primary: #2563eb; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --gray: #64748b; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 40px auto; }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { font-size: 1.8rem; margin-bottom: 10px; color: #0f172a; }
+        p.subtitle { color: var(--gray); font-size: 1rem; }
+        
+        .search-box { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; }
+        .search-box input, .search-box select { flex: 1; min-width: 200px; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; outline: none; }
+        .search-box input:focus, .search-box select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        
+        .results-list { display: grid; gap: 12px; }
+        .error-card { background: var(--card); padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; cursor: pointer; transition: transform 0.2s, border-color 0.2s; }
+        .error-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+        .badge { display: inline-block; background: #eff6ff; color: var(--primary); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .error-card h3 { margin: 0 0 5px 0; font-size: 1.1rem; color: #0f172a; }
+        .error-card p { margin: 0; color: var(--gray); font-size: 0.9rem; }
+
+        .detail-view { background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: none; }
+        .back-btn { background: none; border: none; color: var(--primary); font-weight: 600; cursor: pointer; padding: 0; margin-bottom: 20px; font-size: 0.95rem; display: flex; align-items: center; gap: 5px; }
+        .detail-view h2 { margin-top: 10px; font-size: 1.5rem; }
         ul, ol { padding-left: 20px; }
-        li { margin-bottom: 10px; }
-        h3 { margin-top: 25px; color: #333; font-size: 1.1rem; }
+        li { margin-bottom: 8px; }
+        h4 { margin-top: 20px; color: #334155; }
+        .no-result { text-align: center; color: var(--gray); padding: 40px; }
     </style>
 </head>
 <body>
-    <main class="card">
-        <div id="content">Chargement de la solution...</div>
-    </main>
+    <div class="container">
+        <header>
+            <h1>🔍 Panne Électroménager</h1>
+            <p class="subtitle">Trouvez instantanément la signification et la solution de votre code d'erreur.</p>
+        </header>
+
+        <!-- Barre de recherche et filtres -->
+        <div class="search-box" id="search-container">
+            <input type="text" id="searchInput" placeholder="Entrez un code (ex: OE, F06)..." oninput="filterErrors()">
+            <select id="brandFilter" onchange="filterErrors()">
+                <option value="">Toutes les marques</option>
+                <option value="lg">LG</option>
+                <option value="whirlpool">Whirlpool</option>
+                <option value="bosch">Bosch</option>
+                <option value="samsung">Samsung</option>
+                <option value="hisense">Hisense</option>
+                <option value="electrolux">Electrolux</option>
+            </select>
+        </div>
+
+        <!-- Liste des résultats -->
+        <div id="resultsList" class="results-list">
+            <div class="no-result">Chargement des codes d'erreur...</div>
+        </div>
+
+        <!-- Vue détaillée d'un code -->
+        <div id="detailView" class="detail-view">
+            <button class="back-btn" onclick="showList()">← Retour aux résultats</button>
+            <div id="detailContent"></div>
+        </div>
+    </div>
 
     <script>
-       const SUPABASE_URL = 'https://cdfghwipcjrjsiihaoca.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_3YiJGEZ5BJ6D5RUC_w3W2A_CdRAbk6n';
+        const SUPABASE_URL = 'https://cdfghwipcjrjsiihaoca.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_3YiJGEZ5BJ6D5RUC_w3W2A_CdRAbk6n';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        async function loadErrorDetail() {
-            const params = new URLSearchParams(window.location.search);
-            const brand = params.get('brand');
-            const code = params.get('code');
+        let allErrors = [];
 
-            if (!brand || !code) {
-                document.getElementById('content').innerHTML = '<h1>Paramètres manquants</h1><p>Précisez une marque et un code dans l\'URL (ex: ?brand=lg&code=oe).</p>';
-                return;
-            }
-
+        async function fetchAllErrors() {
             const { data, error } = await supabaseClient
                 .from('appliance_errors')
                 .select('*')
-                .eq('brand', brand.toLowerCase())
-                .eq('error_code', code.toUpperCase())
-                .single();
+                .order('brand', { ascending: true });
 
-            if (error || !data) {
-                document.getElementById('content').innerHTML = '<h1>Code introuvable</h1><p>Ce code d\'erreur n\'est pas encore répertorié dans la base.</p>';
+            if (error) {
+                document.getElementById('resultsList').innerHTML = `<div class="no-result">Erreur de chargement de la base de données.</div>`;
                 return;
             }
 
-            document.getElementById('page-title').innerText = `${data.brand.toUpperCase()} ${data.error_code} : ${data.title}`;
-            
-            let html = `
-                <div class="meta">${data.brand.toUpperCase()} &bull; ${data.model_category}</div>
-                <h1>Code ${data.error_code} : ${data.title}</h1>
-                <h3>Causes probables :</h3>
-                <ul>${data.causes.map(c => `<li>${c}</li>`).join('')}</ul>
-                <h3>Étapes de résolution :</h3>
-                <ol>${data.steps.map(s => `<li>${s}</li>`).join('')}</ol>
-            `;
-            document.getElementById('content').innerHTML = html;
+            allErrors = data || [];
+            displayErrors(allErrors);
         }
 
-        loadErrorDetail();
+        function displayErrors(errors) {
+            const listEl = document.getElementById('resultsList');
+            if (errors.length === 0) {
+                listEl.innerHTML = `<div class="no-result">Aucun code d'erreur trouvé.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = errors.map(err => `
+                <div class="error-card" onclick="showDetail('${err.id}')">
+                    <span class="badge">${err.brand} &bull; ${err.model_category}</span>
+                    <h3>Code ${err.error_code} : ${err.title}</h3>
+                    <p>Cliquez pour voir les causes et la solution pas à pas.</p>
+                </div>
+            `).join('');
+        }
+
+        function filterErrors() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const brand = document.getElementById('brandFilter').value.toLowerCase();
+
+            const filtered = allErrors.filter(err => {
+                const matchQuery = err.error_code.toLowerCase().includes(query) || err.title.toLowerCase().includes(query);
+                const matchBrand = brand === "" || err.brand.toLowerCase() === brand;
+                return matchQuery && matchBrand;
+            });
+
+            displayErrors(filtered);
+        }
+
+        function showDetail(id) {
+            const err = allErrors.find(e => e.id == id);
+            if (!err) return;
+
+            document.getElementById('search-container').style.display = 'none';
+            document.getElementById('resultsList').style.display = 'none';
+            
+            const detailEl = document.getElementById('detailContent');
+            detailEl.innerHTML = `
+                <span class="badge">${err.brand.toUpperCase()} &bull; ${err.model_category}</span>
+                <h2>Code ${err.error_code} : ${err.title}</h2>
+                <h4>Causes probables :</h4>
+                <ul>${err.causes.map(c => `<li>${c}</li>`).join('')}</ul>
+                <h4>Étapes de résolution :</h4>
+                <ol>${err.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+            `;
+            document.getElementById('detailView').style.display = 'block';
+        }
+
+        function showList() {
+            document.getElementById('detailView').style.display = 'none';
+            document.getElementById('search-container').style.display = 'flex';
+            document.getElementById('resultsList').style.display = 'grid';
+        }
+
+        // Lancement au chargement de la page
+        fetchAllErrors();
     </script>
 </body>
 </html>
