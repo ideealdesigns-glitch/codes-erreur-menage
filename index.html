@@ -12,7 +12,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-    <!-- Header (Mention "Base officielle" retirée) -->
+    <!-- Header -->
     <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
         <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
             <a href="?" class="text-xl font-bold text-blue-600 flex items-center gap-2">
@@ -31,7 +31,7 @@
                 <p class="text-slate-500 text-base">Recherchez un code, un symptôme ou un type d'appareil (ex: vidange, fuite, OE, E15).</p>
             </div>
             
-            <!-- Formulaire de recherche interactif (Recherche en direct + Bouton) -->
+            <!-- Formulaire de recherche interactif -->
             <form id="searchForm" onsubmit="handleSearchSubmit(event)" class="bg-white p-3 rounded-2xl shadow-lg border border-slate-200 max-w-3xl mx-auto flex flex-col md:flex-row gap-3">
                 <div class="flex-grow flex items-center px-3 gap-2 border-b md:border-b-0 md:border-r border-slate-200 pb-2 md:pb-0">
                     <span class="text-slate-400">🔍</span>
@@ -161,16 +161,20 @@
         
         let supabaseClient = null;
         if (SUPABASE_URL !== 'TON_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'TON_SUPABASE_ANON_KEY') {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            try {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } catch(e) {
+                supabaseClient = null;
+            }
         }
 
-        // Données de secours (Mock data) pour que le site fonctionne immédiatement
+        // Données de secours sécurisées (avec backticks pour éviter tout bug d'apostrophe)
         const fallbackErrors = [
-            { brand: 'lg', model_category: 'Lave-linge', error_code: 'IE', title: 'Erreur d''entrée d''eau', causes: ['Robinet fermé', 'Filtres bouchés'], steps: ['Vérifiez le robinet', 'Nettoyez les filtres'] },
-            { brand: 'lg', model_category: 'Lave-linge', error_code: 'OE', title: 'Erreur de vidange', causes: ['Filtre obstrué', 'Tuyau plié'], steps: ['Nettoyez le filtre', 'Vérifiez le tuyau'] },
-            { brand: 'bosch', model_category: 'Lave-vaisselle', error_code: 'E15', title: 'Sécurité anti-fuite activée', causes: ['Eau dans le fond de cuve', 'Micro-fuite'], steps: ['Inclinez l''appareil à 45°', 'Séchez le fond'] },
-            { brand: 'samsung', model_category: 'Lave-linge', error_code: '4E', title: 'Problème d''alimentation en eau', causes: ['Arrivée d''eau fermée'], steps: ['Ouvrez le robinet mural'] },
-            { brand: 'whirlpool', model_category: 'Lave-linge', error_code: 'F01', title: 'Défaut général / Électronique', causes: ['Panne carte principale'], steps: ['Débranchez 10 minutes'] }
+            { brand: 'lg', model_category: 'Lave-linge', error_code: 'IE', title: `Erreur d'entrée d'eau`, causes: [`Robinet fermé ou débit insuffisant`, `Filtres bouchés`], steps: [`Vérifiez l'ouverture du robinet`, `Nettoyez les filtres`] },
+            { brand: 'lg', model_category: 'Lave-linge', error_code: 'OE', title: `Erreur de vidange`, causes: [`Filtre de vidange obstrué`, `Tuyau plié`], steps: [`Videz l'eau`, `Nettoyez le filtre de vidange`] },
+            { brand: 'bosch', model_category: 'Lave-vaisselle', error_code: 'E15', title: `Sécurité anti-fuite activée`, causes: [`Eau présente dans le fond de cuve`, `Micro-fuite`], steps: [`Inclinez l'appareil de 45°`, `Séchez le fond`] },
+            { brand: 'samsung', model_category: 'Lave-linge', error_code: '4E', title: `Problème d'alimentation en eau`, causes: [`Robinet fermé ou filtre colmaté`], steps: [`Vérifiez le robinet`, `Nettoyez les filtres`] },
+            { brand: 'whirlpool', model_category: 'Lave-linge', error_code: 'F01', title: `Défaut général / Électronique`, causes: [`Panne générale de la carte`], steps: [`Débranchez l'appareil 10 minutes`] }
         ];
 
         let allErrors = [];
@@ -244,20 +248,16 @@
             filterErrors();
         }
 
-        // --- RECHERCHE SOUPLE ET INTELLIGENTE ---
         function filterErrors() {
             const query = document.getElementById('searchInput').value.trim().toLowerCase();
             const selectedBrand = document.getElementById('brandFilter').value.toLowerCase();
 
             const filtered = allErrors.filter(err => {
-                // Filtre par marque
                 const matchBrand = selectedBrand === "" || err.brand.toLowerCase() === selectedBrand;
                 if (!matchBrand) return false;
 
-                // Si pas de texte saisi, on garde tout ce qui correspond à la marque
                 if (query === "") return true;
 
-                // On crée un "bloc de texte global" regroupant toutes les infos de la panne (code, titre, causes, étapes, catégorie)
                 const textBlob = [
                     err.error_code,
                     err.title,
@@ -266,14 +266,13 @@
                     ...(err.steps || [])
                 ].join(' ').toLowerCase();
 
-                // La recherche est souple : si le texte tapé est contenu n'importe où (même partiellement), ça sort !
                 return textBlob.includes(query);
             });
 
             renderList(filtered);
         }
 
-        // Recherche en direct dès qu'on tape au clavier
+        // Recherche en direct
         document.getElementById('searchInput').addEventListener('input', filterErrors);
         document.getElementById('brandFilter').addEventListener('change', filterErrors);
 
