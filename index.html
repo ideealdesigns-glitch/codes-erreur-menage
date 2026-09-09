@@ -7,13 +7,13 @@
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Script AdSense (Remplace client="ca-pub-XXXXXXXXXXXXXXXX" par ton ID publisher) -->
+    <!-- Script AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
     <!-- Header -->
-    <header class="bg-white border-b border-slate-200 shadow-sm">
+    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
         <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
             <a href="?" class="text-xl font-bold text-blue-600 flex items-center gap-2">
                 <span>🔧</span> ElectroCodes
@@ -25,27 +25,50 @@
     <!-- Main Content -->
     <main class="max-w-5xl mx-auto px-4 py-8 flex-grow w-full">
 
-        <!-- Barre de recherche (Visible uniquement sur la liste) -->
-        <div id="search-section" class="mb-8">
-            <h1 class="text-3xl font-extrabold text-slate-900 mb-2 text-center">Trouvez votre code panne électroménager</h1>
-            <p class="text-slate-500 text-center mb-6">Sélectionnez une marque ou tapez votre code d'erreur (ex: IE, E15, 4E)</p>
+        <!-- Zone de Recherche & Accueil -->
+        <div id="search-section" class="mb-12">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <h1 class="text-4xl font-extrabold text-slate-900 mb-3">Panne d'électroménager ? Trouvez la solution instantanément.</h1>
+                <p class="text-slate-500 text-base">Recherchez parmi des centaines de codes d'erreur pour Lave-linge, Lave-vaisselle et Réfrigérateurs.</p>
+            </div>
             
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <input type="text" id="searchInput" placeholder="Rechercher un code (ex: OE, F01...)" class="px-4 py-3 border border-slate-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full sm:w-96">
-                <select id="brandFilter" class="px-4 py-3 border border-slate-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
-                    <option value="">Toutes les marques</option>
-                    <option value="lg">LG</option>
-                    <option value="bosch">Bosch</option>
-                    <option value="samsung">Samsung</option>
-                    <option value="whirlpool">Whirlpool</option>
-                    <option value="hisense">Hisense</option>
-                    <option value="electrolux">Electrolux</option>
-                </select>
+            <!-- Formulaire de recherche interactif (fonctionne avec Entrée et le bouton) -->
+            <form id="searchForm" onsubmit="handleSearchSubmit(event)" class="bg-white p-3 rounded-2xl shadow-lg border border-slate-200 max-w-3xl mx-auto flex flex-col md:flex-row gap-3">
+                <div class="flex-grow flex items-center px-3 gap-2 border-b md:border-b-0 md:border-r border-slate-200 pb-2 md:pb-0">
+                    <span class="text-slate-400">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Tapez un code (ex: OE, E15, 4E)..." class="w-full focus:outline-none text-slate-700 placeholder-slate-400 bg-transparent py-2">
+                </div>
+                <div class="flex items-center px-3 gap-2 min-w-[200px]">
+                    <span class="text-slate-400">🏷️</span>
+                    <select id="brandFilter" class="w-full focus:outline-none text-slate-700 bg-transparent py-2 cursor-pointer">
+                        <option value="">Toutes les marques</option>
+                        <option value="lg">LG</option>
+                        <option value="bosch">Bosch</option>
+                        <option value="samsung">Samsung</option>
+                        <option value="whirlpool">Whirlpool</option>
+                        <option value="hisense">Hisense</option>
+                        <option value="electrolux">Electrolux</option>
+                    </select>
+                </div>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+                    <span>Rechercher</span>
+                </button>
+            </form>
+
+            <!-- Raccourcis / Pannes fréquentes (Donne vie à l'accueil) -->
+            <div class="mt-6 max-w-3xl mx-auto text-center">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Recherches fréquentes :</p>
+                <div class="flex flex-wrap justify-center gap-2">
+                    <button type="button" onclick="quickSearch('lg', 'OE')" class="bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs transition">LG : OE (Vidange)</button>
+                    <button type="button" onclick="quickSearch('bosch', 'E15')" class="bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs transition">Bosch : E15 (Fuite)</button>
+                    <button type="button" onclick="quickSearch('samsung', '4E')" class="bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs transition">Samsung : 4E (Eau)</button>
+                    <button type="button" onclick="quickSearch('whirlpool', 'F01')" class="bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs transition">Whirlpool : F01</button>
+                </div>
             </div>
         </div>
 
-        <!-- PUBLICITÉ ADSENSE (Format Bannière Responsive) -->
-        <div class="my-6 text-center">
+        <!-- PUBLICITÉ ADSENSE (Bannière) -->
+        <div class="my-8 text-center">
             <ins class="adsbygoogle"
                  style="display:block"
                  data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
@@ -58,14 +81,20 @@
         </div>
 
         <!-- Vue Liste des erreurs -->
-        <div id="error-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Injecté dynamiquement par JS -->
+        <div id="error-container-section">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="section-heading" class="text-xl font-bold text-slate-800">Codes d'erreur disponibles</h2>
+                <span id="results-count" class="text-xs font-medium text-slate-500 bg-slate-200 px-2.5 py-1 rounded-full">0 résultat</span>
+            </div>
+            <div id="error-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Injecté dynamiquement par JS -->
+            </div>
         </div>
 
         <!-- Vue Détail d'une erreur (Cachée par défaut) -->
         <div id="error-detail" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
             <button onclick="goBackToHome()" class="mb-6 inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-800 transition">
-                ← Retour à la liste
+                ← Retour à la liste / Accueil
             </button>
 
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
@@ -125,24 +154,45 @@
         <p>&copy; 2026 ElectroCodes. Tous droits réservés. Base de données indépendante de dépannage.</p>
     </footer>
 
-    <!-- Logique JavaScript avec Supabase & Deep Linking -->
+    <!-- Logique JavaScript -->
     <script>
-        // CONFIGURATION SUPABASE (Remplace par tes vraies clés)
-        const SUPABASE_URL = 'TON_SUPABASE_URL';
-        const SUPABASE_ANON_KEY = 'TON_SUPABASE_ANON_KEY';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // CONFIGURATION SUPABASE
+        const SUPABASE_URL = 'TON_SUPABASE_URL'; // Remplace par ton URL si dispo
+        const SUPABASE_ANON_KEY = 'TON_SUPABASE_ANON_KEY'; // Remplace par ta clé si dispo
+        
+        let supabaseClient = null;
+        if (SUPABASE_URL !== 'TON_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'TON_SUPABASE_ANON_KEY') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // Données de secours (Mock data) pour que le site fonctionne immédiatement sans config Supabase
+        const fallbackErrors = [
+            { brand: 'lg', model_category: 'Lave-linge', error_code: 'IE', title: 'Erreur d''entrée d''eau', causes: ['Robinet fermé', 'Filtres bouchés'], steps: ['Vérifiez le robinet', 'Nettoyez les filtres'] },
+            { brand: 'lg', model_category: 'Lave-linge', error_code: 'OE', title: 'Erreur de vidange', causes: ['Filtre obstrué', 'Tuyau plié'], steps: ['Nettoyez le filtre', 'Vérifiez le tuyau'] },
+            { brand: 'bosch', model_category: 'Lave-vaisselle', error_code: 'E15', title: 'Sécurité anti-fuite activée', causes: ['Eau dans le fond de cuve', 'Micro-fuite'], steps: ['Inclinez l''appareil à 45°', 'Séchez le fond'] },
+            { brand: 'samsung', model_category: 'Lave-linge', error_code: '4E', title: 'Problème d''alimentation en eau', causes: ['Arrivée d''eau fermée'], steps: ['Ouvrez le robinet mural'] },
+            { brand: 'whirlpool', model_category: 'Lave-linge', error_code: 'F01', title: 'Défaut général / Électronique', causes: ['Panne carte principale'], steps: ['Débranchez 10 minutes'] }
+        ];
 
         let allErrors = [];
 
         async function init() {
-            const { data, error } = await supabaseClient.from('appliance_errors').select('*');
-            if (error) {
-                console.error('Erreur chargement Supabase:', error);
-                return;
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient.from('appliance_errors').select('*');
+                    if (!error && data && data.length > 0) {
+                        allErrors = data;
+                    } else {
+                        allErrors = fallbackErrors;
+                    }
+                } catch (e) {
+                    allErrors = fallbackErrors;
+                }
+            } else {
+                allErrors = fallbackErrors;
             }
-            allErrors = data;
             
-            // Gestion du Deep Linking (URL avec ?brand=...&code=...)
+            // Gestion du Deep Linking (?brand=...&code=...)
             const urlParams = new URLSearchParams(window.location.search);
             const brandParam = urlParams.get('brand');
             const codeParam = urlParams.get('code');
@@ -151,30 +201,33 @@
                 const found = allErrors.find(e => e.brand.toLowerCase() === brandParam.toLowerCase() && e.error_code.toUpperCase() === codeParam.toUpperCase());
                 if (found) {
                     showDetail(found);
-                } else {
-                    renderList(allErrors);
+                    return;
                 }
-            } else {
-                renderList(allErrors);
             }
+            
+            renderList(allErrors);
         }
 
         function renderList(errors) {
             const container = document.getElementById('error-list');
+            const countBadge = document.getElementById('results-count');
             document.getElementById('error-detail').classList.add('hidden');
             document.getElementById('search-section').classList.remove('hidden');
+            document.getElementById('error-container-section').classList.remove('hidden');
             
+            countBadge.innerText = `${errors.length} résultat${errors.length > 1 ? 's' : ''}`;
+
             if (errors.length === 0) {
-                container.innerHTML = `<p class="col-span-full text-center text-slate-400 py-8">Aucun code d'erreur trouvé.</p>`;
+                container.innerHTML = `<div class="col-span-full text-center py-12 bg-white rounded-2xl border border-slate-200"><p class="text-slate-500 font-medium">Aucun code d'erreur ne correspond à votre recherche.</p></div>`;
                 return;
             }
 
             container.innerHTML = errors.map(err => `
-                <div onclick="selectErrorFromList('${err.brand}', '${err.error_code}')" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
+                <div onclick="selectErrorFromList('${err.brand}', '${err.error_code}')" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 transition cursor-pointer flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
                             <span class="uppercase text-[10px] font-bold tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">${err.brand}</span>
-                            <span class="text-xs text-slate-400 font-medium">${err.model_category}</span>
+                            <span class="text-xs text-slate-400 font-medium">${err.model_category || 'Électroménager'}</span>
                         </div>
                         <h3 class="text-2xl font-black text-slate-900 mb-1">${err.error_code}</h3>
                         <p class="text-slate-600 text-sm line-clamp-2">${err.title}</p>
@@ -187,10 +240,32 @@
             `).join('');
         }
 
+        function handleSearchSubmit(event) {
+            event.preventDefault(); // Empêche le rechargement brutal de la page
+            filterErrors();
+        }
+
+        function filterErrors() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const selectedBrand = document.getElementById('brandFilter').value.toLowerCase();
+
+            const filtered = allErrors.filter(err => {
+                const matchQuery = query === "" || err.error_code.toLowerCase().includes(query) || err.title.toLowerCase().includes(query);
+                const matchBrand = selectedBrand === "" || err.brand.toLowerCase() === selectedBrand;
+                return matchQuery && matchBrand;
+            });
+            renderList(filtered);
+        }
+
+        function quickSearch(brand, code) {
+            document.getElementById('brandFilter').value = brand;
+            document.getElementById('searchInput').value = code;
+            filterErrors();
+        }
+
         function selectErrorFromList(brand, code) {
             const err = allErrors.find(e => e.brand.toLowerCase() === brand.toLowerCase() && e.error_code.toUpperCase() === code.toUpperCase());
             if (err) {
-                // Modification de l'URL sans recharger la page (Deep Linking)
                 const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + `?brand=${brand}&code=${code}`;
                 window.history.pushState({path:newurl}, '', newurl);
                 showDetail(err);
@@ -199,19 +274,18 @@
 
         function showDetail(err) {
             document.getElementById('search-section').classList.add('hidden');
-            document.getElementById('error-list').classList.add('hidden');
+            document.getElementById('error-container-section').classList.add('hidden');
             document.getElementById('error-detail').classList.remove('hidden');
 
             document.getElementById('page-title').innerText = `Code ${err.error_code} (${err.brand}) : ${err.title}`;
             document.getElementById('detail-brand').innerText = err.brand;
-            document.getElementById('detail-category').innerText = err.model_category;
+            document.getElementById('detail-category').innerText = err.model_category || 'Électroménager';
             document.getElementById('detail-code').innerText = err.error_code;
             document.getElementById('detail-title').innerText = err.title;
 
             document.getElementById('detail-causes').innerHTML = (err.causes || []).map(c => `<li>${c}</li>`).join('');
             document.getElementById('detail-steps').innerHTML = (err.steps || []).map(s => `<li class="bg-slate-50 p-3 rounded-xl border border-slate-100">${s}</li>`).join('');
             
-            // Reset feedback view
             document.getElementById('feedback-buttons').classList.remove('hidden');
             document.getElementById('feedback-thanks').classList.add('hidden');
             
@@ -222,35 +296,17 @@
             const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
             window.history.pushState({path:newurl}, '', newurl);
             document.getElementById('page-title').innerText = "Codes Erreur Électroménager - Guide de Dépannage";
+            document.getElementById('searchInput').value = '';
+            document.getElementById('brandFilter').value = '';
             renderList(allErrors);
         }
 
         function sendFeedback(isPositive) {
             document.getElementById('feedback-buttons').classList.add('hidden');
             document.getElementById('feedback-thanks').classList.remove('hidden');
-            // Optionnel : Enregistrer le feedback dans Supabase si tu as une table de stats
         }
 
-        // Filtres dynamiques de recherche
-        const searchInput = document.getElementById('searchInput');
-        const brandFilter = document.getElementById('brandFilter');
-
-        function filterErrors() {
-            const query = searchInput.value.toLowerCase();
-            const selectedBrand = brandFilter.value.toLowerCase();
-
-            const filtered = allErrors.filter(err => {
-                const matchQuery = err.error_code.toLowerCase().includes(query) || err.title.toLowerCase().includes(query);
-                const matchBrand = selectedBrand === "" || err.brand.toLowerCase() === selectedBrand;
-                return matchQuery && matchBrand;
-            });
-            renderList(filtered);
-        }
-
-        searchInput.addEventListener('input', filterErrors);
-        brandFilter.addEventListener('change', filterErrors);
-
-        // Lancement au chargement de la page
+        // Lancement au chargement
         init();
     </script>
 </body>
