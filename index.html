@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Codes Erreur Électroménager - Guide de Dépannage</title>
+    <title id="page-title">OmniCodes - Guide Universel de Dépannage (Électroménager & Tech)</title>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,8 +16,9 @@
     <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
         <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
             <a href="?" class="text-xl font-bold text-blue-600 flex items-center gap-2">
-                <span>🔧</span> ElectroCodes
+                <span>⚡</span> OmniCodes
             </a>
+            <span class="text-xs bg-slate-100 text-slate-600 font-medium px-3 py-1 rounded-full">Électroménager & Tech</span>
         </div>
     </header>
 
@@ -27,26 +28,33 @@
         <!-- Zone de Recherche & Accueil -->
         <div id="search-section" class="mb-12">
             <div class="text-center max-w-2xl mx-auto mb-8">
-                <h1 class="text-4xl font-extrabold text-slate-900 mb-3">Panne d'électroménager ? Trouvez la solution instantanément.</h1>
-                <p class="text-slate-500 text-base">Recherchez un code, un symptôme ou un type d'appareil (ex: vidange, fuite, OE, E15).</p>
+                <h1 class="text-4xl font-extrabold text-slate-900 mb-3">Une panne ? Un code d'erreur ? Trouvez la solution.</h1>
+                <p class="text-slate-500 text-base">Électroménager, erreurs Web & HTTP, applications mobiles (Expo/Node), ou système.</p>
             </div>
             
-            <!-- Formulaire de recherche interactif -->
+            <!-- Formulaire de recherche -->
             <form id="searchForm" onsubmit="handleSearchSubmit(event)" class="bg-white p-3 rounded-2xl shadow-lg border border-slate-200 max-w-3xl mx-auto flex flex-col md:flex-row gap-3">
                 <div class="flex-grow flex items-center px-3 gap-2 border-b md:border-b-0 md:border-r border-slate-200 pb-2 md:pb-0">
                     <span class="text-slate-400">🔍</span>
-                    <input type="text" id="searchInput" placeholder="Ex: fuite, vidange, OE, E15..." class="w-full focus:outline-none text-slate-700 placeholder-slate-400 bg-transparent py-2">
+                    <input type="text" id="searchInput" placeholder="Ex: OE, 404, METRO, PowerShell..." class="w-full focus:outline-none text-slate-700 placeholder-slate-400 bg-transparent py-2">
                 </div>
                 <div class="flex items-center px-3 gap-2 min-w-[200px]">
                     <span class="text-slate-400">🏷️</span>
                     <select id="brandFilter" class="w-full focus:outline-none text-slate-700 bg-transparent py-2 cursor-pointer">
-                        <option value="">Toutes les marques</option>
-                        <option value="lg">LG</option>
-                        <option value="bosch">Bosch</option>
-                        <option value="samsung">Samsung</option>
-                        <option value="whirlpool">Whirlpool</option>
-                        <option value="hisense">Hisense</option>
-                        <option value="electrolux">Electrolux</option>
+                        <option value="">Tous les univers</option>
+                        <optgroup label="Électroménager">
+                            <option value="lg">LG</option>
+                            <option value="bosch">Bosch</option>
+                            <option value="samsung">Samsung</option>
+                            <option value="whirlpool">Whirlpool</option>
+                        </optgroup>
+                        <optgroup label="Tech, Web & Mobile">
+                            <option value="http">HTTP & Web</option>
+                            <option value="expo">Expo & Mobile</option>
+                            <option value="node">Node.js</option>
+                            <option value="supabase">Supabase</option>
+                            <option value="powershell">PowerShell / OS</option>
+                        </optgroup>
                     </select>
                 </div>
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition shadow-md flex items-center justify-center gap-2">
@@ -54,20 +62,21 @@
                 </button>
             </form>
 
-            <!-- Raccourcis / Pannes fréquentes -->
+            <!-- Raccourcis fréquents (Électroménager & Tech) -->
             <div class="mt-6 max-w-3xl mx-auto text-center">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Recherches fréquentes :</p>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Recherches populaires :</p>
                 <div class="flex flex-wrap justify-center gap-2">
                     <button type="button" onclick="quickSearch('lg', 'OE')" class="bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs transition">LG : OE (Vidange)</button>
-                    <button type="button" onclick="quickSearch('bosch', 'E15')" class="bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs transition">Bosch : E15 (Fuite)</button>
-                    <button type="button" onclick="quickSearch('samsung', '4E')" class="bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs transition">Samsung : 4E (Eau)</button>
-                    <button type="button" onclick="quickSearch('whirlpool', 'F01')" class="bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs transition">Whirlpool : F01</button>
+                    <button type="button" onclick="quickSearch('http', '404')" class="bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs transition">HTTP : 404</button>
+                    <button type="button" onclick="quickSearch('expo', 'METRO')" class="bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs transition">Expo : Metro Bundler</button>
+                    <button type="button" onclick="quickSearch('powershell', 'ExecutionPolicy')" class="bg-white hover:bg-blue-50 hover:border-blue-300 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs transition">PowerShell : Script</button>
                 </div>
             </div>
         </div>
 
-        <!-- PUBLICITÉ ADSENSE -->
-        <div class="my-8 text-center">
+        <!-- PUBLICITÉ ADSENSE SUR LA PAGE D'ACCUEIL -->
+        <div class="my-8 text-center bg-slate-100/50 p-4 rounded-2xl border border-dashed border-slate-200">
+            <span class="text-[10px] text-slate-400 uppercase tracking-widest block mb-2">Espace Publicitaire</span>
             <ins class="adsbygoogle"
                  style="display:block"
                  data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
@@ -82,7 +91,7 @@
         <!-- Vue Liste des erreurs -->
         <div id="error-container-section">
             <div class="flex justify-between items-center mb-6">
-                <h2 id="section-heading" class="text-xl font-bold text-slate-800">Codes d'erreur disponibles</h2>
+                <h2 id="section-heading" class="text-xl font-bold text-slate-800">Codes et pannes répertoriés</h2>
                 <span id="results-count" class="text-xs font-medium text-slate-500 bg-slate-200 px-2.5 py-1 rounded-full">0 résultat</span>
             </div>
             <div id="error-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -93,7 +102,7 @@
         <!-- Vue Détail d'une erreur (Cachée par défaut) -->
         <div id="error-detail" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
             <button onclick="goBackToHome()" class="mb-6 inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-800 transition">
-                ← Retour à la liste / Accueil
+                ← Retour à l'accueil
             </button>
 
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
@@ -108,7 +117,7 @@
 
             <!-- BANDEAU DE SÉCURITÉ LÉGAL -->
             <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl mb-6 text-sm text-amber-800">
-                ⚠️ <strong>Avertissement de sécurité :</strong> Débranchez impérativement l'appareil du secteur et fermez l'arrivée d'eau avant d'effectuer toute manipulation. Si vous avez un doute, faites appel à un professionnel qualifié.
+                ⚠️ <strong>Note technique :</strong> Assurez-vous d'avoir sauvegardé vos travaux en cours avant d'appliquer les correctifs système ou de réinitialiser vos environnements de développement.
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 mb-8">
@@ -122,7 +131,7 @@
                 </div>
             </div>
 
-            <!-- PUBLICITÉ ADSENSE -->
+            <!-- PUBLICITÉ ADSENSE (MILIEU DE FICHE) -->
             <div class="my-6">
                 <ins class="adsbygoogle"
                      style="display:block"
@@ -137,7 +146,7 @@
 
             <!-- MODULE DE FEEDBACK -->
             <div id="feedback-section" class="border-t border-slate-100 pt-6 mt-6 text-center">
-                <p class="text-sm font-medium text-slate-700 mb-3">Ce guide a-t-il résolu votre problème ?</p>
+                <p class="text-sm font-medium text-slate-700 mb-3">Cette solution vous a-t-elle aidé ?</p>
                 <div class="flex justify-center gap-3" id="feedback-buttons">
                     <button onclick="sendFeedback(true)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold px-4 py-2 rounded-xl text-sm transition">👍 Oui, merci !</button>
                     <button onclick="sendFeedback(false)" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold px-4 py-2 rounded-xl text-sm transition">👎 Non, j'ai besoin d'aide</button>
@@ -150,12 +159,11 @@
 
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-400">
-        <p>&copy; 2026 ElectroCodes. Tous droits réservés. Base de données indépendante de dépannage.</p>
+        <p>&copy; 2026 OmniCodes. Tous droits réservés. Plateforme universelle de diagnostic.</p>
     </footer>
 
     <!-- Logique JavaScript -->
     <script>
-        // CONFIGURATION SUPABASE
         const SUPABASE_URL = 'TON_SUPABASE_URL'; 
         const SUPABASE_ANON_KEY = 'TON_SUPABASE_ANON_KEY'; 
         
@@ -168,13 +176,13 @@
             }
         }
 
-        // Données de secours sécurisées (avec backticks pour éviter tout bug d'apostrophe)
+        // Données de secours combinant Électroménager et Tech / Mobile / Web
         const fallbackErrors = [
-            { brand: 'lg', model_category: 'Lave-linge', error_code: 'IE', title: `Erreur d'entrée d'eau`, causes: [`Robinet fermé ou débit insuffisant`, `Filtres bouchés`], steps: [`Vérifiez l'ouverture du robinet`, `Nettoyez les filtres`] },
             { brand: 'lg', model_category: 'Lave-linge', error_code: 'OE', title: `Erreur de vidange`, causes: [`Filtre de vidange obstrué`, `Tuyau plié`], steps: [`Videz l'eau`, `Nettoyez le filtre de vidange`] },
-            { brand: 'bosch', model_category: 'Lave-vaisselle', error_code: 'E15', title: `Sécurité anti-fuite activée`, causes: [`Eau présente dans le fond de cuve`, `Micro-fuite`], steps: [`Inclinez l'appareil de 45°`, `Séchez le fond`] },
-            { brand: 'samsung', model_category: 'Lave-linge', error_code: '4E', title: `Problème d'alimentation en eau`, causes: [`Robinet fermé ou filtre colmaté`], steps: [`Vérifiez le robinet`, `Nettoyez les filtres`] },
-            { brand: 'whirlpool', model_category: 'Lave-linge', error_code: 'F01', title: `Défaut général / Électronique`, causes: [`Panne générale de la carte`], steps: [`Débranchez l'appareil 10 minutes`] }
+            { brand: 'http', model_category: 'Protocoles HTTP', error_code: '404', title: `Not Found / Ressource introuvable`, causes: [`L'URL demandée n'existe pas`, `Faute de frappe dans le lien`], steps: [`Vérifiez l'orthographe de l'URL`, `Contrôlez vos routes`] },
+            { brand: 'expo', model_category: 'Mobile App', error_code: 'METRO', title: `Erreur de liaison Metro Bundler`, causes: [`Port déjà utilisé`, `Cache corrompu`], steps: [`Lancez npx expo start -c`, `Tuez les processus Node`] },
+            { brand: 'powershell', model_category: 'Système & OS', error_code: 'ExecutionPolicy', title: `Exécution de scripts désactivée`, causes: [`Politique de sécurité Windows`], steps: [`Ouvrez PowerShell en admin`, `Exécutez Set-ExecutionPolicy RemoteSigned`] },
+            { brand: 'supabase', model_category: 'Base de données', error_code: 'PGRST116', title: `Ligne introuvable ou violation`, causes: [`Attendu 1 résultat, reçu 0`], steps: [`Utilisez .maybeSingle()`, `Vérifiez les filtres`] }
         ];
 
         let allErrors = [];
@@ -195,7 +203,6 @@
                 allErrors = fallbackErrors;
             }
             
-            // Gestion du Deep Linking (?brand=...&code=...)
             const urlParams = new URLSearchParams(window.location.search);
             const brandParam = urlParams.get('brand');
             const codeParam = urlParams.get('code');
@@ -221,7 +228,7 @@
             countBadge.innerText = `${errors.length} résultat${errors.length > 1 ? 's' : ''}`;
 
             if (errors.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-12 bg-white rounded-2xl border border-slate-200"><p class="text-slate-500 font-medium">Aucun résultat trouvé. Essayez un autre mot-clé (ex: "eau", "vidange", "E15"...).</p></div>`;
+                container.innerHTML = `<div class="col-span-full text-center py-12 bg-white rounded-2xl border border-slate-200"><p class="text-slate-500 font-medium">Aucun résultat trouvé. Essayez un autre mot-clé (ex: "404", "vidange", "expo").</p></div>`;
                 return;
             }
 
@@ -230,7 +237,7 @@
                     <div>
                         <div class="flex justify-between items-start mb-3">
                             <span class="uppercase text-[10px] font-bold tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">${err.brand}</span>
-                            <span class="text-xs text-slate-400 font-medium">${err.model_category || 'Électroménager'}</span>
+                            <span class="text-xs text-slate-400 font-medium">${err.model_category || 'Général'}</span>
                         </div>
                         <h3 class="text-2xl font-black text-slate-900 mb-1">${err.error_code}</h3>
                         <p class="text-slate-600 text-sm line-clamp-2">${err.title}</p>
@@ -272,7 +279,6 @@
             renderList(filtered);
         }
 
-        // Recherche en direct
         document.getElementById('searchInput').addEventListener('input', filterErrors);
         document.getElementById('brandFilter').addEventListener('change', filterErrors);
 
@@ -298,7 +304,7 @@
 
             document.getElementById('page-title').innerText = `Code ${err.error_code} (${err.brand}) : ${err.title}`;
             document.getElementById('detail-brand').innerText = err.brand;
-            document.getElementById('detail-category').innerText = err.model_category || 'Électroménager';
+            document.getElementById('detail-category').innerText = err.model_category || 'Général';
             document.getElementById('detail-code').innerText = err.error_code;
             document.getElementById('detail-title').innerText = err.title;
 
@@ -314,7 +320,7 @@
         function goBackToHome() {
             const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
             window.history.pushState({path:newurl}, '', newurl);
-            document.getElementById('page-title').innerText = "Codes Erreur Électroménager - Guide de Dépannage";
+            document.getElementById('page-title').innerText = "OmniCodes - Guide Universel de Dépannage";
             document.getElementById('searchInput').value = '';
             document.getElementById('brandFilter').value = '';
             renderList(allErrors);
@@ -325,7 +331,6 @@
             document.getElementById('feedback-thanks').classList.remove('hidden');
         }
 
-        // Lancement au chargement
         init();
     </script>
 </body>
